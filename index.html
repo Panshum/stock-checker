@@ -93,7 +93,7 @@
     let exportList = [];
 
     window.onload = () => {
-      const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ9dJbnh0WDPhWb5n0cnSzyXU8jlvOl6xN0sZJf4C3gD6GCjBJ5-9dlALsfON8XgQ/pub?gid=0&single=true&output=csv&t=' + Date.now();
+      const csvUrl = 'https://docs.google.com/spreadsheets/d/1R5LRP06eojAXfXK-1cdOC8sYDBjdJLdfd05K2FhHgKo/export?format=csv&gid=1543770297&t=' + Date.now();
       Papa.parse(csvUrl, {
         download: true,
         header: true,

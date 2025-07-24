@@ -134,12 +134,12 @@
         return;
       }
 
-      let html = '<div class="table-responsive"><table class="table table-striped table-hover"><thead><tr>' + Object.keys(matched[0]).map(k => `<th>${k}</th>`).join('') + '<th>Qty</th><th>Action</th></tr></thead><tbody>';
+      let html = '<div class="table-responsive"><table class="table table-striped table-hover"><thead><tr>' + Object.keys(matched[0]).map(k => `<th>${k}</th>`).join('') + '<th>Request Qty</th><th>Action</th></tr></thead><tbody>';
 
       matched.forEach((row, i) => {
         const uid = `${row["Item Code"]}_${i}`;
         html += '<tr>' + Object.values(row).map(v => `<td>${v}</td>`).join('') +
-          `<td><input type='number' class='form-control qty-input' min='1' value='1' id='qty_${uid}'></td>` +
+          `<td><input type='number' class='form-control qty-input' min='1' value='' id='qty_${uid}' placeholder='Enter Qty'></td>` +
           `<td><button class='btn btn-sm btn-outline-primary' onclick='addToExport(${JSON.stringify(row).replace(/'/g, "&#39;")}, "${uid}")'><i class="fas fa-plus"></i> Add</button></td></tr>`;
       });
 
@@ -149,7 +149,7 @@
 
     function addToExport(item, uid) {
       const qtyInput = document.getElementById(`qty_${uid}`);
-      item['Sample Request Qty'] = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
+      item['Request Qty'] = qtyInput ? parseInt(qtyInput.value) || '' : '';
       exportList.push(item);
       updateExportTable();
     }

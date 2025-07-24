@@ -139,7 +139,7 @@
       matched.forEach((row, i) => {
         const uid = `${row["Item Code"]}_${i}`;
         html += '<tr>' + Object.values(row).map(v => `<td>${v}</td>`).join('') +
-          `<td><input type='number' class='form-control qty-input' min='1' value='' id='qty_${uid}' placeholder='Enter Qty'></td>` +
+          `<td><input type='number' class='form-control qty-input' min='0' value='' id='qty_${uid}' placeholder='Enter Qty'></td>` +
           `<td><button class='btn btn-sm btn-outline-primary' onclick='addToExport(${JSON.stringify(row).replace(/'/g, "&#39;")}, "${uid}")'><i class="fas fa-plus"></i> Add</button></td></tr>`;
       });
 

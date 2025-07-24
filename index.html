@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stock Search Webapp</title>
+  <title>Stock Checker</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
@@ -43,12 +43,15 @@
       margin: 0 auto 30px;
       max-width: 100%;
     }
+    input.qty-input {
+      width: 80px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="text-center mb-4">
-      <h2>Stock Search Webapp</h2>
+      <h2>Stock Checker</h2>
     </div>
     <div class="card shadow-sm mb-4">
       <div class="card-header">
@@ -72,7 +75,7 @@
 
     <div class="card shadow-sm">
       <div class="card-header">
-        <h5 class="mb-0"><i class="fas fa-file-export"></i> Export List</h5>
+        <h5 class="mb-0"><i class="fas fa-file-export"></i> Sample Request List</h5>
       </div>
       <div class="card-body">
         <div class="table-responsive">
@@ -131,19 +134,28 @@
         return;
       }
 
-      let html = '<div class="table-responsive"><table class="table table-striped table-hover"><thead><tr>' + Object.keys(matched[0]).map(k => `<th>${k}</th>`).join('') + '<th>Action</th></tr></thead><tbody>';
+      let html = '<div class="table-responsive"><table class="table table-striped table-hover"><thead><tr>' + Object.keys(matched[0]).map(k => `<th>${k}</th>`).join('') + '<th>Qty</th><th>Action</th></tr></thead><tbody>';
 
-      matched.forEach(row => {
+      matched.forEach((row, i) => {
+        const uid = `${row["Item Code"]}_${i}`;
         html += '<tr>' + Object.values(row).map(v => `<td>${v}</td>`).join('') +
-          `<td><button class='btn btn-sm btn-outline-primary' onclick='addToExport(${JSON.stringify(row).replace(/'/g, "&#39;")})'><i class="fas fa-plus"></i> Add</button></td></tr>`;
+          `<td><input type='number' class='form-control qty-input' min='1' value='1' id='qty_${uid}'></td>` +
+          `<td><button class='btn btn-sm btn-outline-primary' onclick='addToExport(${JSON.stringify(row).replace(/'/g, "&#39;")}, "${uid}")'><i class="fas fa-plus"></i> Add</button></td></tr>`;
       });
 
       html += '</tbody></table></div>';
       resultsDiv.innerHTML = html;
     }
 
-    function addToExport(item) {
+    function addToExport(item, uid) {
+      const qtyInput = document.getElementById(`qty_${uid}`);
+      item['Sample Request Qty'] = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
       exportList.push(item);
+      updateExportTable();
+    }
+
+    function removeFromExport(index) {
+      exportList.splice(index, 1);
       updateExportTable();
     }
 
@@ -155,15 +167,18 @@
       if (exportList.length === 0) return;
 
       const keys = Object.keys(exportList[0]);
-      header.innerHTML = keys.map(k => `<th>${k}</th>`).join('');
+      header.innerHTML = keys.map(k => `<th>${k}</th>`).join('') + '<th>Action</th>';
 
-      exportList.forEach(row => {
+      exportList.forEach((row, index) => {
         const tr = document.createElement('tr');
         keys.forEach(k => {
           const td = document.createElement('td');
           td.textContent = row[k];
           tr.appendChild(td);
         });
+        const removeTd = document.createElement('td');
+        removeTd.innerHTML = `<button class='btn btn-sm btn-outline-danger' onclick='removeFromExport(${index})'><i class="fas fa-trash"></i> Remove</button>`;
+        tr.appendChild(removeTd);
         body.appendChild(tr);
       });
     }

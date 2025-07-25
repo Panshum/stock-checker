@@ -8,87 +8,101 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     body {
-      background-color: #ffffff;
-      color: #000000;
+      background-color: #f9f9f9;
+      color: #212529;
+      font-family: 'Calibri', sans-serif;
     }
     .container {
-      max-width: 960px;
-      margin-top: 50px;
+      max-width: 1000px;
+      margin-top: 40px;
     }
     .card {
-      background-color: #f8f9fa;
-      border: 1px solid #dee2e6;
+      border: none;
+      border-radius: 1rem;
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+      overflow: hidden;
     }
     .card-header {
-      background-color: #343a40;
+      background-color: #212529;
       color: #ffffff;
+      padding: 1rem 1.25rem;
+      font-weight: bold;
+      font-size: 1.1rem;
     }
-    .form-control, .btn, .table {
-      background-color: #ffffff;
-      color: #000000;
-      border-color: #ced4da;
+    .form-control, .btn {
+      border-radius: 0.5rem;
     }
-    .form-control::placeholder {
-      color: #6c757d;
+    .btn {
+      font-weight: 500;
     }
     .table-striped > tbody > tr:nth-of-type(odd) {
-      background-color: #f2f2f2;
+      background-color: #f4f6f8;
+    }
+    .table th {
+      background-color: #f1f1f1;
     }
     .highlight {
       color: #dc3545;
       font-weight: bold;
     }
-    .logo {
-      display: block;
-      margin: 0 auto 30px;
-      max-width: 100%;
-    }
     input.qty-input {
       width: 80px;
+      text-align: center;
+    }
+    .table td, .table th {
+      vertical-align: middle;
+    }
+    .logo {
+      max-height: 60px;
+      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="text-center mb-4">
-      <h2>Stock Checker</h2>
+      <img src="JML%20Email%20Signature%5B2%5D.png" class="logo" alt="Logo">
+      <h2 class="fw-bold">Stock Checker</h2>
     </div>
-    <div class="card shadow-sm mb-4">
+
+    <div class="card mb-4">
       <div class="card-header">
-        <h5 class="mb-0"><i class="fas fa-search"></i> Search</h5>
+        <i class="fas fa-search"></i> Search
       </div>
       <div class="card-body">
-        <div class="row g-2 mb-3">
+        <div class="row g-3 align-items-center mb-3">
           <div class="col-md-6">
             <input type="text" id="itemCodeInput" class="form-control" placeholder="Search by Item Code" />
           </div>
           <div class="col-md-6">
-            <select id="sampleBoxSelect" class="form-control">
+            <select id="sampleBoxSelect" class="form-select">
               <option value="">Select Sample Box</option>
             </select>
           </div>
         </div>
-        <button class="btn btn-primary mb-3" onclick="searchItems()">Search</button>
-        <div class="mb-3">
-          <label for="fileUpload" class="form-label">Or upload Excel file to match item codes:</label>
-          <input type="file" class="form-control" id="fileUpload" accept=".xlsx, .xls, .csv" onchange="handleFileUpload(event)">
-        </div>
-        <div id="results" class="mt-3"></div>
+        <button class="btn btn-primary w-100 mb-3" onclick="searchItems()">
+          <i class="fas fa-search"></i> Search
+        </button>
+        <label for="fileUpload" class="form-label">Or upload Excel file to match item codes:</label>
+        <input type="file" class="form-control mb-2" id="fileUpload" accept=".xlsx, .xls, .csv" onchange="handleFileUpload(event)">
+        <div id="results"></div>
       </div>
     </div>
 
-    <div class="card shadow-sm">
+    <div class="card">
       <div class="card-header">
-        <h5 class="mb-0"><i class="fas fa-file-export"></i> Sample Request List</h5>
+        <i class="fas fa-file-export"></i> Sample Request List
       </div>
       <div class="card-body">
         <div class="table-responsive">
-          <table class="table table-bordered" id="exportTable">
+          <table class="table table-bordered table-striped" id="exportTable">
             <thead><tr id="exportHeader"></tr></thead>
             <tbody></tbody>
           </table>
         </div>
-        <button class="btn btn-success" onclick="downloadExcel()">Export as Excel</button>
+        <button class="btn btn-success w-100" onclick="downloadExcel()">
+          <i class="fas fa-download"></i> Export as Excel
+        </button>
       </div>
     </div>
   </div>
@@ -138,12 +152,12 @@
         return;
       }
 
-      let html = '<div class="table-responsive"><table class="table table-striped table-hover"><thead><tr>' + Object.keys(matched[0]).map(k => `<th>${k}</th>`).join('') + '<th>Request Qty</th><th>Action</th></tr></thead><tbody>';
+      let html = '<div class="table-responsive"><table class="table table-hover"><thead><tr>' + Object.keys(matched[0]).map(k => `<th>${k}</th>`).join('') + '<th>Request Qty</th><th>Action</th></tr></thead><tbody>';
 
       matched.forEach((row, i) => {
         const uid = `${row["Item Code"]}_${i}`;
         html += '<tr>' + Object.values(row).map(v => `<td>${v}</td>`).join('') +
-          `<td><input type='number' class='form-control qty-input' min='0' value='0' id='qty_${uid}' placeholder='Enter Qty'></td>` +
+          `<td><input type='number' class='form-control qty-input' min='0' value='0' id='qty_${uid}' placeholder='0'></td>` +
           `<td><button class='btn btn-sm btn-outline-primary' onclick='addToExport(${JSON.stringify(row).replace(/'/g, "&#39;")}, "${uid}")'><i class="fas fa-plus"></i> Add</button></td></tr>`;
       });
 
